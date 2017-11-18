@@ -26,15 +26,16 @@ class PiledPlugin(octoprint.plugin.SettingsPlugin,
 		 octoprint.plugin.ProgressPlugin):
 
 	##~~ SettingsPlugin mixin
-
 	def get_settings_defaults(self):
 		return dict(
 			# put your plugin's default settings here
 		)
-	def get_template_vars(self): # adds num as a template variable
+	
+	 # adds num as a template variable. May not be needed
+	def get_template_vars(self):
 		return dict(num=self._settings.get(["num"]))
+	
 	##~~ AssetPlugin mixin
-
 	def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
 		# core UI here.
@@ -44,16 +45,19 @@ class PiledPlugin(octoprint.plugin.SettingsPlugin,
 			less=["less/piled.less"]
 		)
 
-	##~~ Softwareupdate hook
+
 	def on_print_progress(progress):
-		leds = math.floor(progress / self._settings.get(["num"])) # Calculates the number of leds to light up
+		# Calculates the number of leds to light up. Green for progress, red else
+		leds = math.floor(progress / self._settings.get(["num"]))
 		for i in range(self._settings.get(["num"])):
-			if(i <= leds): # Light up leds green
+			if(i <= leds):
 				strip.setPixelColor(i, green)
 				strip.show()
-			else: # Light up leds red
+			else:
 				strip.setPixelColor(i, red)
 				strip.show()
+				
+	##~~ Softwareupdate hook
 	def get_update_information(self):
 		# Define the configuration for your plugin to use with the Software Update
 		# Plugin here. See https://github.com/foosel/OctoPrint/wiki/Plugin:-Software-Update
