@@ -9,9 +9,6 @@ or manually using this URL:
 
     https://github.com/Quad14/OctoPrint-Piled/archive/master.zip
 
-**TODO:** Describe how to install your plugin, if more needs to be done than just installing it via pip or through
-the plugin manager.
-
 ## Configuration
 
-**TODO:** Describe your plugin's configuration options (if any).
+On the web interface for OctoPrint you can find the settings tab for the number of leds on your strip.
