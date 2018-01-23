@@ -8,54 +8,36 @@ from __future__ import absolute_import
 # as necessary.
 #
 # Take a look at the documentation on what other plugin mixins are available.
-
+import os
 import octoprint.plugin
-import time
-from neopixel import *
-# LED strip configuration:
-
-LED_PIN     = 18      # GPIO pin connected to the pixels (must support PWM!).
-LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
-LED_DMA     = 5       # DMA channel to use for generating signal (try 5)
-LED_INVERT  = False   # True to invert the signal (when using NPN transistor level shift)
-
-
+#os.system('python test.py')
 class PiledPlugin(octoprint.plugin.SettingsPlugin,
                   octoprint.plugin.AssetPlugin,
                   octoprint.plugin.TemplatePlugin,
-		 octoprint.plugin.ProgressPlugin):
-
-	##~~ SettingsPlugin mixin
-	def get_settings_defaults(self):
-		return dict(
-			# put your plugin's default settings here
-		)
+		 octoprint.plugin.ProgressPlugin,
+       		octoprint.plugin.StartupPlugin):
 	
 	 # adds num as a template variable. May not be needed
-	def get_template_vars(self):
-		return dict(num=self._settings.get(["num"]))
-	
+	def get_template_configs(self):
+		return dict(type="settings", custom_bindings=False)
+	def get_settings_defaults(self):
+		return dict(num="10")
+	def on_after_startup(self):
+		import os
+		print "Here"
+		os.system('sudo python ./templates/strip.py 10 20')
+		self._logger.info("Got Here")
+	def on_print_progress(storage, path, progress):
+		os.system('sudo python strip.py '+str(num)+' '+str(progress))
 	##~~ AssetPlugin mixin
 	def get_assets(self):
 		# Define your plugin's asset files to automatically include in the
 		# core UI here.
 		return dict(
-			js=["js/piled.js"],
-			css=["css/piled.css"],
-			less=["less/piled.less"]
+			#js=["js/piled.js"],
+			#css=["css/piled.css"],
+			#less=["less/piled.less"]
 		)
-
-
-	def on_print_progress(progress):
-		# Calculates the number of leds to light up. Green for progress, red else
-		leds = math.floor(progress / self._settings.get(["num"]))
-		for i in range(self._settings.get(["num"])):
-			if(i <= leds):
-				strip.setPixelColor(i, green)
-				strip.show()
-			else:
-				strip.setPixelColor(i, red)
-				strip.show()
 				
 	##~~ Softwareupdate hook
 	def get_update_information(self):
